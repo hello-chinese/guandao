@@ -1,0 +1,9 @@
+{
+"TOTAL_MEMORY": 268435456,
+"dataUrl": "PipelineViewer.data.unityweb",
+"asmCodeUrl": "PipelineViewer.asm.code.unityweb",
+"asmMemoryUrl": "PipelineViewer.asm.memory.unityweb",
+"asmFrameworkUrl": "PipelineViewer.asm.framework.unityweb",
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20"
+}

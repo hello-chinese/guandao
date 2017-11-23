@@ -1,0 +1,63 @@
+<div class="row container-fluid map-row-height" ng-class="{ true :'toggle-row',false:''} [isToggle]">
+    <div class="col-md-6 max-height">
+        <div class="map-box" id="map"></div>
+        <div class="table-from">
+            <div class="widget-header">
+                <a class="widget-header-toggle" ng-click="toggleTable()">
+                    <i class="glyphicon glyphicon-chevron-down"></i>
+                </a>
+                <a class="add-pipeline">
+                    <i class="glyphicon glyphicon-plus"></i>
+                </a>
+            </div>
+            <div class="table-box content-box collapse in" >
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active" ng-click="guandaoTable()">
+                        <a data-toggle="tab">
+                            管道信息
+                        </a>
+                    </li>
+                    <li ng-click="guanjinTable()">
+                        <a data-toggle="tab">管井信息</a>
+                    </li>
+                </ul>
+                <table class="table table-bordered table-hover" ng-show="isShowTable">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>名称</th>
+                        <th>位置</th>
+                        <th>起点埋深</th>
+                        <th>终点埋深</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat=' i in tableList' ng-dblclick="TrdbClick($index)">
+                        <td ng-bind="$index + 1"></td>
+                        <td ng-bind="i.NAME"></td>
+                        <td ng-bind="i.OWNER"></td>
+                        <td ng-bind="i.SDEEPTH"></td>
+                        <td ng-bind="i.EDEEPTH"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-bordered table-hover" ng-hide="isShowTable">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>名称</th>
+                        <th>位置</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat=' i in tableListGJ' ng-dblclick="TrdbClick($index)">
+                        <td ng-bind="$index + 1"></td>
+                        <td ng-bind="i.NAME"></td>
+                        <td ng-bind="i.ADDRESS"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

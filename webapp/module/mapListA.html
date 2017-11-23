@@ -1,0 +1,32 @@
+<div class="row container-fluid map-row-height" ng-class="{ true :'toggle-row',false:''} [isToggle]">
+    <div class="col-md-6 max-height">
+        <div class="map-box" id="map"></div>
+        <div class="table-from">
+            <div class="widget-header">
+                <a class="widget-header-toggle" ng-click="toggleTable()">
+                    <i class="glyphicon glyphicon-chevron-down"></i>
+                </a>
+            </div>
+            <div class="table-box content-box collapse in" >
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>位置</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat=' i in tableList' ng-dblclick="TrdbClick($index)">
+                        <td ng-bind="$index + 1"></td>
+                        <td ng-bind="i.NAME"></td>
+                        <td ng-bind="i.TYPE"></td>
+                        <td ng-bind="i.ADDRESS"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

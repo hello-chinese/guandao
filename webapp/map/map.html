@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>江苏旅游 Map</title>
+    <link rel="stylesheet" href="ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="ol.js"></script>
+    <script src="jquery.js"></script>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="bootstrap.min.js"></script>
+
+    <style>
+      #map {
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map">
+    <p class="btn-form" style="position: absolute;right: 20px;z-index: 1;top: 5px;opacity: .8">
+      <button  onclick="onbtnLayerclick(1)">摄像头 </button>
+      <button  onclick="onbtnLayerclick(2)">环境</button>
+      <button  onclick="onbtnLayerclick(3)">水质</button>
+    </p>
+    <div id="popup"></div></div>
+   
+
+
+
+
+    <script>
+      var google_layer = new ol.layer.Tile({
+    title: "google",
+    source: new ol.source.XYZ({
+        url: "http://mt2.google.cn/vt/lyrs=m&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}"
+    })
+});
+
+/*var vectorSource1 = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: function(extent) {
+          return 'http://localhost:8080/geoserver/cite'+
+          '/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:js_sxt&' +
+              'outputFormat=application/json&srsname=EPSG:3857&' +
+              'bbox=' + extent.join(',') + ',EPSG:3857';
+        },
+        strategy: ol.loadingstrategy.bbox
+      });*/
+var vectorSource1=new ol.source.Vector({
+          url: 'js_sxt.json',
+          format: new ol.format.GeoJSON()
+});
+
+
+var iconStyle1 = new ol.style.Style({
+        image: new ol.style.Icon(({
+          src: 'shexiangtuo@2x.png'
+        }))
+      });
+var vector_layer1 = new ol.layer.Vector({
+        source: vectorSource1,
+        style:iconStyle1
+      });
+//----------------------------------------
+var vectorSource2=new ol.source.Vector({
+          url: 'js_hj.json',
+          format: new ol.format.GeoJSON()
+});
+
+var iconStyle2 = new ol.style.Style({
+        image: new ol.style.Icon(({
+          src: 'wenduji@2x.png'
+        }))
+      });
+var vector_layer2 = new ol.layer.Vector({
+        source: vectorSource2,
+        style:iconStyle2
+      });
+//----------------------------------------
+var vectorSource3=new ol.source.Vector({
+          url: 'js_sz.json',
+          format: new ol.format.GeoJSON()
+});
+
+var iconStyle3 = new ol.style.Style({
+        image: new ol.style.Icon(({
+          src: 'shuiwenji@2x.png'
+        }))
+      });
+var vector_layer3 = new ol.layer.Vector({
+        source: vectorSource3,
+        style:iconStyle3
+      });
+
+
+
+//var bounds = [13488451.2345924, 3528135.88133545,
+ //                   13489479.0683189, 3528267.02237706];
+
+      var map = new ol.Map({
+        layers: [
+          google_layer,vector_layer1,vector_layer2,vector_layer3
+        ],
+        target: 'map',
+        controls: ol.control.defaults({
+          attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+            collapsible: false
+          })
+        }),
+        view: new ol.View({
+          center: [13374486, 3534652],
+          zoom: 14,
+          minZoom: 10,  
+          maxZoom: 16 
+         // extent: [13365549,3539223,13383846,3539424]
+        })
+      });
+
+      var element = document.getElementById('popup');
+
+      var popup = new ol.Overlay({
+        element: element,
+        positioning: 'bottom-center',
+        stopEvent: false,
+        offset: [0, 0]
+      });
+      map.addOverlay(popup);
+
+
+      //map.getView().fit(bounds, map.getSize());
+
+      // display popup on click
+      map.on('click', function(evt) {
+        var feature = map.forEachFeatureAtPixel(evt.pixel,
+            function(feature) {
+              return feature;
+            });
+        if (feature) {
+          var coordinates = feature.getGeometry().getCoordinates();
+          popup.setPosition(coordinates);
+          var content=feature.get('name');
+          var type=feature.get('type');
+          if(type=='1') content="<img src='shexiangtouPop.png' onclick='onPopClick(1)'>";
+          else if(type=='2') content="<img src='hjPop.png' onclick='onPopClick(2)'>";
+          else if(type=='3') content="<img src='hjPop.png' onclick='onPopClick(3)'>";
+          $(element).popover({
+            'placement': 'top',
+            'html': true,
+            'content': content
+          });
+          $(element).popover('show');
+        } else {
+          $(element).popover('destroy');
+        }
+      });
+
+      function onPopClick(type){
+        alert(type);
+      }
+
+      // change mouse cursor when over marker
+     /* map.on('pointermove', function(e) {
+        if (e.dragging) {
+          $(element).popover('destroy');
+          return;
+        }
+        var pixel = map.getEventPixel(e.originalEvent);
+        var hit = map.hasFeatureAtPixel(pixel);
+        map.getTarget().style.cursor = hit ? 'pointer' : '';
+      });*/
+
+      var v1f=true;
+      var v2f=true;
+      var v3f=true;
+      function onbtnLayerclick(type){
+        if(type==1){
+          v1f=!v1f;
+          vector_layer1.setVisible(v1f);
+        }else if(type==2){
+          v2f=!v2f;
+          vector_layer2.setVisible(v2f);
+        }else if(type==3){
+          v3f=!v3f;
+          vector_layer3.setVisible(v3f);
+        }
+      }
+     
+    </script>
+
+  </body>
+</html>

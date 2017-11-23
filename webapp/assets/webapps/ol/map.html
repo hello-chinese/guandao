@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Accessible Map</title>
+    <link rel="stylesheet" href="ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="ol.js"></script>
+    <style>
+          a.skiplink {
+            position: absolute;
+            clip: rect(1px, 1px, 1px, 1px);
+            padding: 0;
+            border: 0;
+            height: 1px;
+            width: 1px;
+            overflow: hidden;
+          }
+          a.skiplink:focus {
+            clip: auto;
+            height: auto;
+            width: auto;
+            background-color: #fff;
+            padding: 0.3em;
+          }
+          #map:focus {
+            outline: #4A74A8 solid 0.15em;
+          }
+          body .main {
+            width: 100%;
+          }
+          .main #map {
+            width: 50%;
+            height: 768px;
+            float:left;
+          }
+          .main #gameContainer {
+            width: 50%;
+            height:768px;
+            float:right;
+          }
+    </style>
+  </head>
+  <body>
+    <a class="skiplink" href="#map">Go to map</a>
+    <div id="main" class="main">  
+        <div id="map"  tabindex="0"></div>
+        <div id="gameContainer"></div>
+     <!-- <button id="zoom-out">Zoom out</button>
+     <button id="zoom-in">Zoom in</button>-->
+   </div>
+    <script>
+        var tian_di_tu_road_layer = new ol.layer.Tile({
+            title: "天地图路网",
+            source: new ol.source.XYZ({
+                url: "http://t4.tianditu.com/DataServer?T=vec_w&x={x}&y={y}&l={z}"
+            })
+        });
+        var tian_di_tu_annotation = new ol.layer.Tile({
+            title: "天地图文字标注",
+            source: new ol.source.XYZ({
+                url: 'http://t3.tianditu.com/DataServer?T=cva_w&x={x}&y={y}&l={z}'
+            })
+        });
+        var power_line_layer = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              url: 'http://localhost:8080/geoserver/cite/wms',
+              params: {
+                  'FORMAT': 'image/png',
+                   'VERSION': '1.1.1',
+                    STYLES: '',
+                    LAYERS: 'cite:power_line',
+              }
+            })
+        });
+        var tx_line_layer = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/cite/wms',
+                params: {
+                    'FORMAT': 'image/png',
+                    'VERSION': '1.1.1',
+                    STYLES: '',
+                    LAYERS: 'cite:tx_line',
+                }
+            })
+        });
+        var watch_point_layer = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              url: 'http://localhost:8080/geoserver/cite/wms',
+              params: {
+                  'FORMAT': 'image/png',
+                  'VERSION': '1.1.1',
+                  STYLES: '',
+                  LAYERS: 'cite:watch_point',
+              }
+            })
+          });
+        var monitor_point_layer = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              url: 'http://localhost:8080/geoserver/cite/wms',
+              params: {
+                  'FORMAT': 'image/png',
+                  'VERSION': '1.1.1',
+                  STYLES: '',
+                  LAYERS: 'cite:monitor_com_layer',
+              }
+            })
+        });
+        var testsource=new ol.source.ImageWMS({
+              ratio: 1,
+              url: 'http://localhost:8080/geoserver/cite/wms',
+              params: {
+                  'FORMAT': 'image/png',
+                  'VERSION': '1.1.1',
+                  STYLES: '',
+                  LAYERS: 'cite:watch_point',
+              }
+        });
+        var bounds = [13488451.2345924, 3528135.88133545, 13489479.0683189, 3528267.02237706];
+        var map = new ol.Map({
+            layers: [tian_di_tu_road_layer,tian_di_tu_annotation],
+            target: 'map',
+            controls: ol.control.defaults({
+                attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+                    collapsible: false
+                })
+             }),
+            view: new ol.View({
+              center: [13489000, 3528200],
+              zoom: 17
+            })
+      });
+
+          // map.getView().fit(bounds, map.getSize());
+          map.on('singleclick', function(evt) {
+
+              // document.getElementById('info').innerHTML = '';
+            var viewResolution = /** @type {number} */ (map.getView().getResolution());
+            var url = testsource.getGetFeatureInfoUrl(
+                evt.coordinate, viewResolution, 'EPSG:3857',
+                {'INFO_FORMAT': 'application/json'});//text/html
+                fetch(url).then(function(response) {
+                  return response.json();
+                }).then(function(json) {
+                  var fc=json;
+                  if(fc.features.length>0){
+                    alert(fc.features[0].properties.name);
+                    sendmessageto3d(fc.features[0].properties.name);
+                  }
+                });
+          });
+
+     /* document.getElementById('zoom-out').onclick = function() {
+        var view = map.getView();
+        var zoom = view.getZoom();
+        view.setZoom(zoom - 1);
+      };
+
+      document.getElementById('zoom-in').onclick = function() {
+        var view = map.getView();
+        var zoom = view.getZoom();
+        view.setZoom(zoom + 1);
+      };*/
+    </script>
+
+    <link rel="stylesheet" href="../PipelineViewer/TemplateData/style.css">
+    <script src="../PipelineViewer/TemplateData/UnityProgress.js"></script>  
+    <script src="../PipelineViewer/Build/UnityLoader.js"></script>
+    <script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "../PipelineViewer/Build/PipelineViewer.json", {onProgress: UnityProgress});
+    
+        function sendmessageto3d(txt){
+          gameInstance.SendMessage("CommunicationStub", "FocusToPipelineByWeb", txt);
+        }
+        function GetParamsFromUnity(obj){
+
+        }
+    </script>
+    <!--<script type="text/javascript" src="ws.js"></script>-->
+  </body>
+</html>

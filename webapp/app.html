@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="guandaoMain" ng-controller="mainCtrl">
+<head>
+    <meta charset="UTF-8">
+    <title>地下管道系统</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/webapps/ol/ol.css">
+    <link rel="stylesheet" href="./css/base.css">
+    <script src="assets/webapps/ol/ol.js"></script>
+</head>
+<body>
+    <!--头部-->
+    <header class="header-content">
+        <h3 class="text-center white no-margin">智能小镇管理平台</h3>
+        <ul class="nav navbar-nav pull-right">
+            <li>
+                <p class="userImg">
+                    <img src="./img/userIcon.png" alt="">
+                </p>
+                <span class="label graybule">您好,admin,欢迎您!</span>
+            </li>
+            <li>
+                <p class="settingImg">
+                    <img src="./img/settingIcon.png" alt="">
+                </p>
+                <span class="label graybule">设置</span>
+            </li>
+            <li>
+                <b class="white"> | </b>
+                <span class="label graybule">退出</span>
+            </li>
+        </ul>
+    </header>
+    <div class="content clearfix">
+        <div class="left-tabs">
+            <ul>
+                <li ng-repeat=' i in list' ng-click='getCurrentList($index)' ng-class="{ true :'state',false:''} [i.isActive]">
+                    <a href="{{i.location}}" ng-bind="i.text"></a>
+                </li>
+            </ul>
+        </di>
+
+    </div>
+        <div class="right-table" >
+            <div class="content-wrapper" ng-view></div>
+            <div class="unity3d-box display-none" ng-class="{ true :'display-show',false:'display-none'}[isunityBox]" id="gameContainer"></div>
+        </div>
+    </div>
+</body>
+<script src="./js/angular.js"></script>
+<script src="./js/angular-route.js"></script>
+<script src="./js/jquery.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script src='./js/echarts.min.js'></script>
+<script src="./js/app.js"></script>
+<link rel="stylesheet" href="assets/webapps/PipelineViewer/TemplateData/style.css">
+<script src="assets/webapps/PipelineViewer/TemplateData/UnityProgress.js"></script>
+<script src="assets/webapps/PipelineViewer/Build/UnityLoader.js"></script>
+</html>
